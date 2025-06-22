@@ -19,36 +19,46 @@ Make sure you have a MySQL database called movie_booking with the following tabl
 
 CREATE TABLE movies (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    
     movie_id VARCHAR(20),
+    
     movie_name VARCHAR(100),
+    
     release_date DATE,
+    
     director VARCHAR(100),
+    
     cast TEXT,
+    
     budget VARCHAR(50),
+    
     duration VARCHAR(50),
+    
     rating VARCHAR(10)
 );
 
 CREATE TABLE bookings (
+
     id INT AUTO_INCREMENT PRIMARY KEY,
+    
     movie_name VARCHAR(100),
+    
     num_tickets INT,
+    
     customer_name VARCHAR(100)
 );
 # 🚀 How to Run
 Clone the repository:
 
-bash
 git clone https://github.com/<your-username>/Movie-Booking-System.git
 Open the project folder and install required packages (if not already installed):
 
-bash
+
 pip install mysql-connector-python
 Make sure your MySQL server is running and the credentials are correct in backend.py.
 
 Run the main file:
 
-bash
 python movie_booking_gui.py
 
 # 📷 Screenshots
