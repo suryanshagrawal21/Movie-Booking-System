@@ -50,18 +50,15 @@ CREATE TABLE bookings (
     customer_name VARCHAR(100)
 );
 # 🚀 How to Run
-Clone the repository:
+1. Clone the repository:
+   git clone https://github.com/suryanshagrawal21/Movie-Booking-System.git
+2. Install MySQL connector:
+   pip install mysql-connector-python
+3. Make sure the MySQL database is set up (as described above), then run:
+   python movie_booking_gui.py
 
-git clone https://github.com/<your-username>/Movie-Booking-System.git
-Open the project folder and install required packages (if not already installed):
 
 
-pip install mysql-connector-python
-Make sure your MySQL server is running and the credentials are correct in backend.py.
-
-Run the main file:
-
-python movie_booking_gui.py
 
 # 📷 Screenshots
 ![Screenshot 2025-04-30 132912](https://github.com/user-attachments/assets/8ee5f24c-eb44-4f28-b441-2b95703744d6)
@@ -71,7 +68,8 @@ python movie_booking_gui.py
 
 
 # 👤 Author
-Suryansh Agrawal
+[Suryansh Agrawal](https://github.com/Suryanshagrawal21)
+
 
 # 📄 License
 This project is open-source and available under the MIT License.
