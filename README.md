@@ -11,7 +11,9 @@ This is a GUI-based application developed using Python Tkinter and MySQL to mana
 
 # 🛠️ Tech Stack
 Frontend: Python Tkinter
+
 Backend: MySQL Database
+
 Language: Python 3
 
 # 💾 Database Structure
@@ -68,8 +70,8 @@ python movie_booking_gui.py
 ![Screenshot 2025-04-30 133259](https://github.com/user-attachments/assets/8c679ab9-dd64-467c-b3af-4e0c1242bbcf)
 
 
-👤 Author
+# 👤 Author
 Suryansh Agrawal
 
-📄 License
+# 📄 License
 This project is open-source and available under the MIT License.
