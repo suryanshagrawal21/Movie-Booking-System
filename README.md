@@ -36,6 +36,33 @@ Movie-Booking-System/
 └── README.md             # Project Documentation
 ```
 
+## 🗄️ Database Schema
+
+The project uses a simple relational database structure:
+
+### `movies` Table
+Stores movie details.
+-   `id`: Primary Key
+-   `movie_id`: Unique Identifier (e.g., M001)
+-   `movie_name`: Title
+-   `release_date`, `director`, `cast`, `budget`, `duration`, `rating`
+
+### `bookings` Table
+Stores ticket booking records.
+-   `id`: Primary Key
+-   `movie_name`: Foreign Key reference (conceptual)
+-   `num_tickets`: Count of tickets
+-   `customer_name`: Name of the booker
+-   `booking_time`: Timestamp
+
+## 🚀 Future Improvements
+
+*   **User Authentication**: Add Admin/User login.
+*   **Seat Selection**: Visual seat map for booking.
+*   **Payment Gateway**: Dummy payment processing.
+*   **Email Notifications**: Send booking confirmation emails.
+*   **Web Version**: Port frontend to Flask/Django.
+
 ## ⚙️ Installation & Setup
 
 ### Prerequisites
