@@ -1,75 +1,78 @@
-# 🎬 Online Movie Ticket Booking System
-This is a GUI-based application developed using Python Tkinter and MySQL to manage movie details and book tickets online. The project provides an easy-to-use interface for adding, updating, deleting, and searching movie data, as well as booking tickets for selected movies.
+# 🎬 Movie Booking System
 
-# 📌 Features
-- Add new movie details (ID, name, release date, director, cast, etc.)
-- View all movies in a list
-- Search for movies using any field
-- Update or delete selected movie entries
-- Book tickets by entering customer name and number of tickets
-- Uses MySQL for backend storage
+A clean, Python-based desktop application for managing movie tickets and bookings. Built with **Tkinter** and **MySQL**.
 
-# 🛠️ Tech Stack
-Frontend: Python Tkinter
+![Python](https://img.shields.io/badge/Python-3.x-blue.svg)
+![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-Backend: MySQL Database
+## 🚀 Features
 
-Language: Python 3
+*   **Movie Management**: Add, Update, Delete, and View movies.
+*   **Booking System**: Book tickets for available movies with customer details.
+*   **Search**: Filter movies by name.
+*   **Modern UI**: Dark-themed interface with split-view layout.
+*   **Data Persistence**: All data is stored securely in a MySQL database.
 
-# 💾 Database Structure
-Make sure you have a MySQL database called movie_booking with the following tables:
+## 🛠️ Tech Stack
 
-CREATE TABLE movies (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    
-    movie_id VARCHAR(20),
-    
-    movie_name VARCHAR(100),
-    
-    release_date DATE,
-    
-    director VARCHAR(100),
-    
-    cast TEXT,
-    
-    budget VARCHAR(50),
-    
-    duration VARCHAR(50),
-    
-    rating VARCHAR(10)
-);
+*   **Frontend**: Python Tkinter (using `ttk` for modern styling).
+*   **Backend**: Python `mysql-connector`.
+*   **Database**: MySQL.
 
-CREATE TABLE bookings (
+## 📂 Project Structure
 
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    
-    movie_name VARCHAR(100),
-    
-    num_tickets INT,
-    
-    customer_name VARCHAR(100)
-);
-# 🚀 How to Run
-1. Clone the repository:
-   git clone https://github.com/suryanshagrawal21/Movie-Booking-System.git
-2. Install MySQL connector:
-   pip install mysql-connector-python
-3. Make sure the MySQL database is set up (as described above), then run:
-   python movie_booking_gui.py
+```
+Movie-Booking-System/
+├── src/
+│   ├── main.py           # Application Entry Point
+│   └── database.py       # Database Management Class
+├── database/
+│   ├── setup.py          # Database Initialization Script
+│   ├── schema.sql        # Database Table Definitions
+│   └── sample_data.sql   # Dummy Data for Testing
+├── assets/               # Images and Screenshots
+├── requirements.txt      # Python Dependencies
+└── README.md             # Project Documentation
+```
 
+## ⚙️ Installation & Setup
 
+### Prerequisites
+1.  **Python 3.x** installed.
+2.  **MySQL Server** installed and running.
 
+### Steps
 
-# 📷 Screenshots
-![Screenshot 2025-04-30 132912](https://github.com/user-attachments/assets/8ee5f24c-eb44-4f28-b441-2b95703744d6)
-![Screenshot 2025-04-30 132945](https://github.com/user-attachments/assets/9787083e-f0b1-4621-a5ba-350d461f7182)
-![Screenshot 2025-04-30 133206](https://github.com/user-attachments/assets/dd3bd988-3066-4904-96b6-4ba4fba63e1d)
-![Screenshot 2025-04-30 133259](https://github.com/user-attachments/assets/8c679ab9-dd64-467c-b3af-4e0c1242bbcf)
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/suryanshagrawal21/Movie-Booking-System.git
+    cd Movie-Booking-System
+    ```
 
+2.  **Install Dependencies**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-# 👤 Author
-[Suryansh Agrawal](https://github.com/Suryanshagrawal21)
+3.  **Setup Database**
+    Run the setup script to create the database and tables.
+    ```bash
+    python database/setup.py
+    ```
+    *   *Note: If your MySQL root password is not the default, the script will prompt you to enter it.*
 
+## ▶️ How to Run
 
-# 📄 License
-This project is open-source and available under the MIT License.
+Start the application:
+```bash
+python src/main.py
+```
+
+## 📸 Screenshots
+
+*(Add screenshots of your application here)*
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.

@@ -1,12 +1,16 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
-from backend import DatabaseManager
+from database import DatabaseManager
 
 class MovieBookingApp(tk.Tk):
+    """
+    Main Application Class for the Movie Booking System.
+    Inherits from tk.Tk.
+    """
     def __init__(self):
         super().__init__()
         self.title("Movie Booking System")
-        self.geometry("1100x700")
+        self.geometry("1100x750")
         self.configure(bg="#2c3e50") # Dark Blue-Grey
 
         # Style Configuration
@@ -15,13 +19,14 @@ class MovieBookingApp(tk.Tk):
         self.configure_styles()
 
         # Database Connection
-        self.db = DatabaseManager(password="Divya.21") # Default from original
+        self.db = DatabaseManager(password="Divya.21") # Try default password
         if not self.db.connect():
-             pwd = simpledialog.askstring("Database Password", "Enter MySQL Root Password:", show='*')
+             # If default fails, ask user
+             pwd = simpledialog.askstring("Database Password", "MySQL Connection Failed.\nEnter MySQL Root Password:", show='*')
              if pwd:
                  self.db = DatabaseManager(password=pwd)
                  if not self.db.connect():
-                     messagebox.showerror("Error", "Could not connect to database. Exiting.")
+                     messagebox.showerror("Error", "Could not connect to database. Please check your password and ensure MySQL is running.")
                      self.destroy()
                      return
              else:
@@ -32,18 +37,17 @@ class MovieBookingApp(tk.Tk):
         self.create_widgets()
 
     def configure_styles(self):
-        # Colors
+        """Configures the custom Tkinter styles."""
         bg_color = "#2c3e50"
         fg_color = "white"
         accent_color = "#e67e22" # Orange
-        darker_bg = "#34495e"
-
+        
         self.style.configure("TFrame", background=bg_color)
         self.style.configure("TLabel", background=bg_color, foreground=fg_color, font=("Segoe UI", 11))
         self.style.configure("TButton", background=accent_color, foreground="white", font=("Segoe UI", 10, "bold"), padding=6)
-        self.style.map("TButton", background=[('active', '#d35400')]) # Darker orange on hover
+        self.style.map("TButton", background=[('active', '#d35400')]) 
         
-        self.style.configure("Header.TLabel", font=("Segoe UI", 20, "bold"), foreground=accent_color)
+        self.style.configure("Header.TLabel", font=("Segoe UI", 24, "bold"), foreground=accent_color)
         
         self.style.configure("Treeview", 
                              background="white", 
@@ -57,6 +61,7 @@ class MovieBookingApp(tk.Tk):
         self.style.configure("TLabelframe.Label", background=bg_color, foreground=accent_color, font=("Segoe UI", 12, "bold"))
 
     def create_widgets(self):
+        """Creates and packs the GUI widgets."""
         # Main Container
         main_container = ttk.Frame(self)
         main_container.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
@@ -85,10 +90,11 @@ class MovieBookingApp(tk.Tk):
             "rating": tk.StringVar()
         }
 
+        # Label Text and Variable mapping
         labels = [
-            ("Movie ID", "movie_id"), ("Movie Name", "name"), ("Release Date", "release_date"),
+            ("Movie ID", "movie_id"), ("Movie Name", "name"), ("Release Date (YYYY-MM-DD)", "release_date"),
             ("Director", "director"), ("Cast", "cast"), ("Budget", "budget"),
-            ("Duration", "duration"), ("Rating", "rating")
+            ("Duration (Hrs)", "duration"), ("Rating (0-10)", "rating")
         ]
 
         for i, (text, var_name) in enumerate(labels):
@@ -98,7 +104,7 @@ class MovieBookingApp(tk.Tk):
             entry = ttk.Entry(left_panel, textvariable=self.vars[var_name], width=30)
             entry.grid(row=i, column=1, sticky="ew", pady=5, padx=(10, 0))
 
-        # Buttons Frame
+        # Action Buttons
         btn_frame = ttk.Frame(left_panel)
         btn_frame.grid(row=len(labels), column=0, columnspan=2, pady=20)
 
@@ -109,7 +115,7 @@ class MovieBookingApp(tk.Tk):
         
         ttk.Separator(left_panel, orient='horizontal').grid(row=len(labels)+1, column=0, columnspan=2, sticky="ew", pady=10)
         
-        # Booking Section in Left Panel
+        # Booking Section
         ttk.Label(left_panel, text="Booking Actions", style="TLabelframe.Label").grid(row=len(labels)+2, column=0, columnspan=2, pady=(10,5))
         ttk.Button(left_panel, text="🎫 Book Ticket", command=self.open_booking_window).grid(row=len(labels)+3, column=0, columnspan=2, sticky="ew", padx=20)
 
@@ -126,7 +132,7 @@ class MovieBookingApp(tk.Tk):
         ttk.Button(search_frame, text="Search", command=self.search_movie).pack(side=tk.LEFT)
         ttk.Button(search_frame, text="Refresh", command=self.load_movies).pack(side=tk.LEFT, padx=5)
 
-        # Treeview
+        # Treeview for Data Display
         cols = ("ID", "Name", "Date", "Director", "Cast", "Budget", "Duration", "Rating")
         self.tree = ttk.Treeview(right_panel, columns=cols, show="headings", selectmode="browse")
         
@@ -139,51 +145,50 @@ class MovieBookingApp(tk.Tk):
         y_scroll.pack(side=tk.RIGHT, fill=tk.Y)
         x_scroll.pack(side=tk.BOTTOM, fill=tk.X)
 
-        # Configure columns
         for col in cols:
             self.tree.heading(col, text=col)
-            self.tree.column(col, width=100)
+            self.tree.column(col, width=90)
         
         self.tree.bind("<<TreeviewSelect>>", self.on_select)
         
         self.load_movies()
 
     def clear_form(self):
+        """Clears all input fields."""
         for var in self.vars.values():
             var.set("")
         self.tree.selection_remove(self.tree.selection())
 
     def get_form_data(self):
+        """Returns a dict of data from inputs."""
         return {k: v.get() for k, v in self.vars.items()}
 
     def load_movies(self):
+        """Fetches movies from DB and populates Treeview."""
         for item in self.tree.get_children():
             self.tree.delete(item)
         movies = self.db.view_movies()
         for movie in movies:
-            # Assuming movie tuple structure matches backend.ViewMovieData
-            # Based on sql, it might be: id, movie_id, name, release, director, cast, budget, duration, rating
-            # We want to display relevant info. 
-            # Note: backend.view_movies returns * from movies. 
-            # Let's see the tuple structure when we run it or from SQL.
-            # Usually: (id, movie_id, movie_name, release_date, director, cast, budget, duration, rating)
-            # Treeview columns: ID, Name, Date, Director, Cast, Budget, Duration, Rating
-            # Mapping: movie_id -> ID, movie_name -> Name, etc.
-            # We will ignore the primary key 'id' for display or put it in hidden column, 
-            # OR usage 'movie_id' as the ID if it's unique enough for user.
-            # Let's display: movie_id, name, release_date, director, cast, budget, duration, rating
+            # Assuming movie tuple: (id, movie_id, name, release, director, cast, budget, duration, rating)
             values = movie[1:] # Skip internal ID
-            self.tree.insert("", tk.END, values=values, iid=movie[0]) # Use internal ID as iid
+            self.tree.insert("", tk.END, values=values, iid=movie[0])
 
     def add_movie(self):
+        """Adds a movie to the DB."""
+        # Simple Validation
+        if not self.vars["name"].get() or not self.vars["movie_id"].get():
+            messagebox.showwarning("Validation Error", "Movie Name and ID are required.")
+            return
+
         if self.db.add_movie(**self.get_form_data()):
             messagebox.showinfo("Success", "Movie added successfully!")
             self.load_movies()
             self.clear_form()
         else:
-            messagebox.showerror("Error", "Failed to add movie.")
+            messagebox.showerror("Error", "Failed to add movie. Check if Movie ID is unique.")
 
     def update_movie(self):
+        """Updates the selected movie."""
         selected = self.tree.selection()
         if not selected:
              messagebox.showwarning("Warning", "Please select a movie to update.")
@@ -197,6 +202,7 @@ class MovieBookingApp(tk.Tk):
              messagebox.showerror("Error", "Failed to update movie.")
 
     def delete_movie(self):
+        """Deletes the selected movie."""
         selected = self.tree.selection()
         if not selected:
              messagebox.showwarning("Warning", "Please select a movie to delete.")
@@ -212,9 +218,8 @@ class MovieBookingApp(tk.Tk):
                 messagebox.showerror("Error", "Failed to delete movie.")
 
     def search_movie(self):
+        """Searches movies by name."""
         term = self.search_var.get()
-        # Basic search on name for now, or use complex backend search
-        # Backend search accepts kwargs. Let's try to search by name primarily
         results = self.db.search_movies(movie_name=term)
         
         for item in self.tree.get_children():
@@ -223,18 +228,19 @@ class MovieBookingApp(tk.Tk):
              self.tree.insert("", tk.END, values=movie[1:], iid=movie[0])
 
     def on_select(self, event):
+        """Populates form when a row is selected."""
         selected = self.tree.selection()
         if not selected: return
         
         values = self.tree.item(selected[0], 'values')
         # Map values back to variables
-        # values: movie_id, name, release_date, director, cast, budget, duration, rating
         keys = ["movie_id", "name", "release_date", "director", "cast", "budget", "duration", "rating"]
         for i, key in enumerate(keys):
             if i < len(values):
                 self.vars[key].set(values[i])
 
     def open_booking_window(self):
+        """Opens the ticket booking modal."""
         selected = self.tree.selection()
         if not selected:
             messagebox.showwarning("Warning", "Please select a movie to book.")
@@ -244,28 +250,40 @@ class MovieBookingApp(tk.Tk):
         
         top = tk.Toplevel(self)
         top.title(f"Book: {movie_name}")
-        top.geometry("400x300")
+        top.geometry("400x350")
         top.configure(bg="#34495e")
 
-        ttk.Label(top, text=f"Booking for: {movie_name}", font=("Segoe UI", 12, "bold"), background="#34495e", foreground="orange").pack(pady=20)
+        ttk.Label(top, text=f"Booking for:\n{movie_name}", font=("Segoe UI", 12, "bold"), background="#34495e", foreground="orange", justify="center").pack(pady=20)
 
         f = ttk.Frame(top)
         f.pack(pady=10)
 
-        ttk.Label(f, text="Customer Name:", background="#34495e", foreground="white").grid(row=0, column=0, padx=5, pady=5)
+        # Style for the modal
+        style = ttk.Style()
+        style.configure("Modal.TLabel", background="#34495e", foreground="white")
+
+        ttk.Label(f, text="Customer Name:", style="Modal.TLabel").grid(row=0, column=0, padx=5, pady=5)
         name_var = tk.StringVar()
         ttk.Entry(f, textvariable=name_var).grid(row=0, column=1, padx=5, pady=5)
 
-        ttk.Label(f, text="No. of Tickets:", background="#34495e", foreground="white").grid(row=1, column=0, padx=5, pady=5)
+        ttk.Label(f, text="No. of Tickets:", style="Modal.TLabel").grid(row=1, column=0, padx=5, pady=5)
         tickets_var = tk.StringVar()
         ttk.Entry(f, textvariable=tickets_var).grid(row=1, column=1, padx=5, pady=5)
 
         def submit():
-            if not name_var.get() or not tickets_var.get():
+            name = name_var.get()
+            tickets = tickets_var.get()
+
+            if not name or not tickets:
                 messagebox.showerror("Error", "Please fill all fields")
                 return
-            if self.db.add_booking(movie_name, tickets_var.get(), name_var.get()):
-                messagebox.showinfo("Success", "Booking Confirmed!")
+            
+            if not tickets.isdigit() or int(tickets) <= 0:
+                messagebox.showerror("Error", "Please enter a valid number of tickets.")
+                return
+
+            if self.db.add_booking(movie_name, tickets, name):
+                messagebox.showinfo("Success", f"Booking Confirmed!\nMovie: {movie_name}\nTickets: {tickets}")
                 top.destroy()
             else:
                  messagebox.showerror("Error", "Booking Failed")
