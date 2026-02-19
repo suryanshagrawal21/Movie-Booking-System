@@ -98,7 +98,8 @@ python src/main.py
 
 ## 📸 Screenshots
 
-*(Add screenshots of your application here)*
+![Dashboard Preview](assets/dashboard_preview.png)
+*Main Dashboard showing Movie Management and Booking Interface*
 
 ## 🤝 Contributing
 
