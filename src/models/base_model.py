@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 from ..utils.config_manager import ConfigManager
+from ..utils.logger import logger
 
 class BaseModel:
     """Base class for all models, handling database connectivity."""
@@ -15,7 +16,7 @@ class BaseModel:
         }
 
     def _get_connection(self, database=None):
-        """Internal method to get a connection. Parameter 'database' can override default."""
+        """Internal method to get a connection."""
         cfg = self.config.copy()
         if database:
             cfg["database"] = database
@@ -25,19 +26,8 @@ class BaseModel:
             if conn.is_connected():
                 return conn
         except Error as e:
-            # Note: Caller should handle if None returned
+            logger.error(f"Connection Error: {e}")
             return None
-
-    def test_connection(self, host, user, password, database=""):
-        """Static method to test credentials before saving."""
-        try:
-            conn = mysql.connector.connect(host=host, user=user, password=password, database=database)
-            if conn.is_connected():
-                conn.close()
-                return True
-        except Error:
-            return False
-        return False
 
     def execute_query(self, query, params=None):
         conn = self._get_connection()
@@ -46,13 +36,16 @@ class BaseModel:
             cursor = conn.cursor()
             cursor.execute(query, params or ())
             conn.commit()
+            logger.info(f"Executed Query: {query[:100]}...")
             return True
         except Error as e:
-            print(f"Query Execution Error: {e}")
+            logger.error(f"Query Execution Error: {e} | Query: {query}")
             return False
         finally:
-            cursor.close()
-            conn.close()
+            if 'cursor' in locals():
+                cursor.close()
+            if 'conn' in locals():
+                conn.close()
 
     def fetch_one(self, query, params=None):
         conn = self._get_connection()
@@ -63,11 +56,13 @@ class BaseModel:
             result = cursor.fetchone()
             return result
         except Error as e:
-            print(f"Fetch One Error: {e}")
+            logger.error(f"Fetch One Error: {e} | Query: {query}")
             return None
         finally:
-            cursor.close()
-            conn.close()
+            if 'cursor' in locals():
+                cursor.close()
+            if 'conn' in locals():
+                conn.close()
 
     def fetch_all(self, query, params=None):
         conn = self._get_connection()
@@ -77,8 +72,10 @@ class BaseModel:
             cursor.execute(query, params or ())
             return cursor.fetchall()
         except Error as e:
-            print(f"Fetch All Error: {e}")
+            logger.error(f"Fetch All Error: {e} | Query: {query}")
             return []
         finally:
-            cursor.close()
-            conn.close()
+            if 'cursor' in locals():
+                cursor.close()
+            if 'conn' in locals():
+                conn.close()

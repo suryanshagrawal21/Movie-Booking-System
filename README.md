@@ -1,109 +1,105 @@
-# 🎬 Movie Booking System
+# 🎬 Cinema Pro - Professional Movie Booking System
 
-A clean, Python-based desktop application for managing movie tickets and bookings. Built with **Tkinter** and **MySQL**.
+[![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)](https://www.mysql.com/)
+[![Architecture](https://img.shields.io/badge/Architecture-MVC-green.svg)](#architecture)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-![Python](https://img.shields.io/badge/Python-3.x-blue.svg)
-![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+**Cinema Pro** is an industry-grade desktop application designed for seamless movie ticket management and booking. Built with a focus on robust architecture, clean code, and user experience, this project demonstrates a complete real-world software engineering lifecycle.
 
-## 🚀 Features
+---
 
-*   **Movie Management**: Add, Update, Delete, and View movies.
-*   **Booking System**: Book tickets for available movies with customer details.
-*   **Search**: Filter movies by name.
-*   **Modern UI**: Dark-themed interface with split-view layout.
-*   **Data Persistence**: All data is stored securely in a MySQL database.
+## 🚀 Key Features
+
+### 👤 User Module
+- **Secure Authentication**: Robust login/signup system with password hashing (bcrypt).
+- **Interactive Dashboard**: Search, filter, and browse upcoming movies.
+- **Dynamic Seat Selection**: Real-time seat availability grid with premium seat indicators.
+- **Booking History**: Track past bookings and view/download generated tickets.
+- **E-Ticket Generation**: Automatic PDF ticket generation for confirmed bookings.
+
+### 🛡️ Admin Module
+- **Movie Management**: Full CRUD operations for movie records.
+- **Show Scheduling**: Map movies to theaters and specific time slots.
+- **Theater Control**: Manage theater capacity and seat mappings.
+
+---
+
+## 🏗️ Architecture
+
+The project follows a **Layered MVC (Model-View-Controller)** pattern:
+
+- **Models**: Handled via a robust data access layer (`BaseModel`) with transaction support.
+- **Controllers**: Centralized business logic (Service Layer) for Auth and Bookings.
+- **Views**: Modern, responsive UI built with **CustomTkinter**.
+- **Utils**: Utility layer for PDF generation, Logging, and Configuration.
+
+```mermaid
+graph TD
+    A[View] --> B[Controller]
+    B --> C[Model]
+    C --> D[(MySQL Database)]
+    E[Logging/Utils] -.-> B
+    E -.-> C
+```
+
+---
 
 ## 🛠️ Tech Stack
 
-*   **Frontend**: Python Tkinter (using `ttk` for modern styling).
-*   **Backend**: Python `mysql-connector`.
-*   **Database**: MySQL.
+- **Language**: Python 3.12+
+- **Database**: MySQL (Relational Schema)
+- **GUI Framework**: CustomTkinter (Modern Dark UI)
+- **Security**: Bcrypt (Hashing)
+- **Reporting**: ReportLab (PDF Generation)
+- **Config**: Environment Variable support (.env)
 
-## 📂 Project Structure
+---
 
-```
-Movie-Booking-System/
-├── src/
-│   ├── main.py           # Application Entry Point
-│   └── database.py       # Database Management Class
-├── database/
-│   ├── setup.py          # Database Initialization Script
-│   ├── schema.sql        # Database Table Definitions
-│   └── sample_data.sql   # Dummy Data for Testing
-├── assets/               # Images and Screenshots
-├── requirements.txt      # Python Dependencies
-└── README.md             # Project Documentation
-```
-
-## 🗄️ Database Schema
-
-The project uses a simple relational database structure:
-
-### `movies` Table
-Stores movie details.
--   `id`: Primary Key
--   `movie_id`: Unique Identifier (e.g., M001)
--   `movie_name`: Title
--   `release_date`, `director`, `cast`, `budget`, `duration`, `rating`
-
-### `bookings` Table
-Stores ticket booking records.
--   `id`: Primary Key
--   `movie_name`: Foreign Key reference (conceptual)
--   `num_tickets`: Count of tickets
--   `customer_name`: Name of the booker
--   `booking_time`: Timestamp
-
-## 🚀 Future Improvements
-
-*   **User Authentication**: Add Admin/User login.
-*   **Seat Selection**: Visual seat map for booking.
-*   **Payment Gateway**: Dummy payment processing.
-*   **Email Notifications**: Send booking confirmation emails.
-*   **Web Version**: Port frontend to Flask/Django.
-
-## ⚙️ Installation & Setup
+## ⚙️ Setup & Installation
 
 ### Prerequisites
-1.  **Python 3.x** installed.
-│   ├── models/             # Data access layer (MySQL interactions)
-│   ├── views/              # UI components (CustomTkinter)
-│   ├── controllers/        # Business logic and services
-│   ├── utils/              # Hashing, PDF generation, etc.
-│   └── assets/             # Icons and images
-├── tickets/                # Generated PDF tickets
-├── tests/                  # Unit tests
-├── run.py                  # Main application entry point
-└── requirements.txt        # Project dependencies
-```
+- MySQL Server installed and running.
+- Python 3.x installed.
 
-## 🛠️ Installation & Setup
+### Commands
+1. **Clone the repo**:
+   ```bash
+   git clone https://github.com/suryanshagrawal21/Movie-Booking-System.git
+   cd Movie-Booking-System
+   ```
+2. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. **Configure Environment**:
+   - Create a `.env` file based on `.env.example`.
+   - Update your MySQL credentials.
+4. **Initialize Database**:
+   ```bash
+   python database/setup_v2.py
+   ```
+5. **Run Application**:
+   ```bash
+   python run.py
+   ```
 
-1.  **Clone the Repository**:
-    ```bash
-    git clone https://github.com/suryanshagrawal21/Movie-Booking-System.git
-    cd Movie-Booking-System
-    ```
+---
 
-2.  **Install Dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
+## 👨‍💻 Interview Readiness
 
+This project was built following industry best practices:
+- **Clean Code**: SOLID principles and consistent naming conventions.
+- **Error Handling**: Centralized try-catch blocks and logging.
+- **Concurrency**: Transaction-safe seat booking logic.
+- **Security**: No hardcoded credentials; handled via environment variables.
 
-## ▶️ How to Run
+*See [docs/interview_prep.md](docs/interview_prep.md) for a detailed pitch guide and common Q&A.*
 
-Start the application:
-```bash
-python src/main.py
-```
+---
 
-## 📸 Screenshots
-
-![Dashboard Preview](assets/dashboard_preview.png)
-*Main Dashboard showing Movie Management and Booking Interface*
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open issues or submit pull requests.
+## 🔮 Future Improvements
+- [ ] Integration with real Payment Gateways (Stripe/PayPal API).
+- [ ] Email notifications using SMTP (concept implemented).
+- [ ] Web-based dashboard using Flask/Django.
+- [ ] Machine Learning based movie recommendations.
