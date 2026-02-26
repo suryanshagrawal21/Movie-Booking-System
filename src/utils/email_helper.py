@@ -1,13 +1,15 @@
 import smtplib
+import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 from .config_manager import ConfigManager
 
 class EmailHelper:
     """Utility class to send emails via Gmail SMTP."""
     
     @staticmethod
-    def send_email(to_email, subject, body):
+    def send_email(to_email, subject, body, attachment_path=None):
         config = ConfigManager.load_config()
         
         # We expect these keys to be in config.json
@@ -25,6 +27,12 @@ class EmailHelper:
             msg['To'] = to_email
             msg['Subject'] = subject
             msg.attach(MIMEText(body, 'plain'))
+            
+            if attachment_path and os.path.exists(attachment_path):
+                with open(attachment_path, "rb") as f:
+                    part = MIMEApplication(f.read(), Name=os.path.basename(attachment_path))
+                part['Content-Disposition'] = f'attachment; filename="{os.path.basename(attachment_path)}"'
+                msg.attach(part)
             
             server = smtplib.SMTP(smtp_server, smtp_port)
             server.starttls()

@@ -111,3 +111,16 @@ class BookingModel(BaseModel):
             ORDER BY b.booking_time DESC
         """
         return self.fetch_all(query, (user_id,))
+
+    def get_all_bookings(self):
+        """Fetches all bookings for admin view."""
+        query = """
+            SELECT b.*, u.username, m.title as movie_title, s.show_time, t.name as theater_name
+            FROM bookings b
+            JOIN users u ON b.user_id = u.id
+            JOIN shows s ON b.show_id = s.id
+            JOIN movies m ON s.movie_id = m.id
+            JOIN theaters t ON s.theater_id = t.id
+            ORDER BY b.booking_time DESC
+        """
+        return self.fetch_all(query)

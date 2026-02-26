@@ -1,6 +1,8 @@
 from ..models.movie_model import MovieModel
 from ..models.booking_models import ShowModel, TheaterModel, SeatModel, BookingModel
+from ..models.user_model import UserModel
 from ..utils.helpers import DocumentUtils
+from ..utils.email_helper import EmailHelper
 import os
 
 class BookingService:
@@ -10,6 +12,7 @@ class BookingService:
         self.theater_model = TheaterModel()
         self.seat_model = SeatModel()
         self.booking_model = BookingModel()
+        self.user_model = UserModel()
 
     def get_available_movies(self):
         return self.movie_model.get_all_movies()
@@ -60,9 +63,20 @@ class BookingService:
             ticket_path = f"tickets/ticket_{booking_id}.pdf"
             DocumentUtils.generate_ticket_pdf(booking_details, ticket_path)
             
+            # Send Email Notification
+            user = self.user_model.fetch_one("SELECT email FROM users WHERE id = %s", (user_id,))
+            if user and user.get('email'):
+                subject = f"Your Ticket for {show['movie_title']}"
+                body = f"Hello,\n\nYour booking for {show['movie_title']} is confirmed!\n\nDetails:\n- Theater: {show['theater_name']}\n- Time: {show['show_time']}\n- Tickets: {len(seat_ids)}\n- Total: ${total_price}\n\nPlease find your ticket attached.\n\nEnjoy the movie!"
+                EmailHelper.send_email(user['email'], subject, body, ticket_path)
+            
             return True, ticket_path
         
         return False, result # result contains the error message
 
     def get_user_history(self, user_id):
         return self.booking_model.get_user_booking_history(user_id)
+
+    def get_all_bookings(self):
+        """Returns all bookings in the system."""
+        return self.booking_model.get_all_bookings()

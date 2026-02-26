@@ -67,15 +67,25 @@ class LoginView(ctk.CTkFrame):
         username = self.login_username.get()
         password = self.login_password.get()
         
+        # 1. Database Check (Authentication)
         try:
             success, result = self.auth_service.login(username, password)
-            if success:
-                self.on_login_success(result)
-            else:
-                self.login_status.configure(text=result)
         except Exception as e:
-            self.login_status.configure(text="Connection Error. Check DB Settings.")
-            print(f"Login error: {e}")
+            self.login_status.configure(text=f"Connection Error: {str(e)[:40]}")
+            print("ERROR:", e)
+            return
+
+        if not success:
+            self.login_status.configure(text=result)
+            return
+            
+        # 2. Page Transition (Routing)
+        try:
+            self.on_login_success(result)
+        except Exception as e:
+            print("ERROR during dashboard building:", e)
+            import traceback
+            traceback.print_exc()
 
     def handle_signup(self):
         username = self.signup_username.get()
@@ -92,9 +102,9 @@ class LoginView(ctk.CTkFrame):
                 self.signup_status.configure(text="Account created! Please login.", text_color="green")
             else:
                 self.signup_status.configure(text=message, text_color="red")
-        except Exception:
-            self.signup_status.configure(text="Connection Error. Check DB Settings.")
-
+        except Exception as e:
+            self.signup_status.configure(text=f"Error: {str(e)[:50]}...", text_color="red")
+            print(f"Signup exception: {e}")
     def open_settings(self):
         SettingsView(self, self.on_settings_saved)
 

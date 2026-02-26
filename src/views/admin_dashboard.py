@@ -14,7 +14,7 @@ class AdminDashboard(ctk.CTkFrame):
 
     def setup_ui(self):
         self.tabview = ctk.CTkTabview(self)
-        self.tabview.pack(fill="both", expand=True, padx=20, pady=20)
+        self.tabview.pack(fill="both", expand=True, padx=20, pady=(20, 5))
         
         self.tabview.add("Manage Movies")
         self.tabview.add("Manage Shows")
@@ -23,6 +23,9 @@ class AdminDashboard(ctk.CTkFrame):
         self.setup_movie_management()
         self.setup_show_management()
         self.setup_booking_view()
+        
+        # Logout button
+        ctk.CTkButton(self, text="Logout", fg_color="#c0392b", width=120, command=self.master.master.logout).pack(side="bottom", pady=(5, 20))
 
     def setup_movie_management(self):
         tab = self.tabview.tab("Manage Movies")
@@ -106,7 +109,37 @@ class AdminDashboard(ctk.CTkFrame):
 
     def setup_booking_view(self):
         tab = self.tabview.tab("View Bookings")
-        ctk.CTkLabel(tab, text="Booking reports and analytics coming soon...").pack(pady=20)
+        
+        self.booking_list_scroll = ctk.CTkScrollableFrame(tab)
+        self.booking_list_scroll.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        self.refresh_booking_list()
+
+    def refresh_booking_list(self):
+        for widget in self.booking_list_scroll.winfo_children():
+            widget.destroy()
+            
+        bookings = self.booking_service.get_all_bookings()
+        if not bookings:
+            ctk.CTkLabel(self.booking_list_scroll, text="No bookings found.").pack(pady=20)
+            return
+
+        # Header
+        header = ctk.CTkFrame(self.booking_list_scroll, fg_color="gray20")
+        header.pack(fill="x", pady=5, padx=5)
+        ctk.CTkLabel(header, text="User", width=100, font=ctk.CTkFont(weight="bold")).pack(side="left", padx=10)
+        ctk.CTkLabel(header, text="Movie", width=150, font=ctk.CTkFont(weight="bold")).pack(side="left", padx=10)
+        ctk.CTkLabel(header, text="Show Time", width=150, font=ctk.CTkFont(weight="bold")).pack(side="left", padx=10)
+        ctk.CTkLabel(header, text="Price", width=80, font=ctk.CTkFont(weight="bold")).pack(side="left", padx=10)
+
+        for b in bookings:
+            f = ctk.CTkFrame(self.booking_list_scroll)
+            f.pack(fill="x", pady=2, padx=5)
+            
+            ctk.CTkLabel(f, text=b['username'], width=100, anchor="w").pack(side="left", padx=10)
+            ctk.CTkLabel(f, text=b['movie_title'], width=150, anchor="w").pack(side="left", padx=10)
+            ctk.CTkLabel(f, text=str(b['show_time']), width=150, anchor="w").pack(side="left", padx=10)
+            ctk.CTkLabel(f, text=f"${b['total_price']}", width=80, anchor="w").pack(side="left", padx=10)
 
     def add_movie(self):
         try:

@@ -28,7 +28,8 @@ class UserDashboard(ctk.CTkFrame):
         self.nav_history_btn = ctk.CTkButton(self.sidebar, text="My Bookings", fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), command=self.show_history)
         self.nav_history_btn.pack(pady=5, padx=10, fill="x")
 
-        ctk.CTkButton(self.sidebar, text="Logout", fg_color="#c0392b", command=self.master.logout).pack(side="bottom", pady=20, padx=20, fill="x")
+        # Navigating up two levels: self (UserDashboard) -> self.master (container) -> self.master.master (MovieApp)
+        ctk.CTkButton(self.sidebar, text="Logout", fg_color="#c0392b", command=self.master.master.logout).pack(side="bottom", pady=20, padx=20, fill="x")
 
         # Main Content Area
         self.main_container = ctk.CTkFrame(self, fg_color="transparent")
