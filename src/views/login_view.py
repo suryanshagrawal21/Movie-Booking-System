@@ -13,19 +13,37 @@ class LoginView(ctk.CTkFrame):
         self.setup_ui()
 
     def setup_ui(self):
-        # Header
-        self.label = ctk.CTkLabel(self, text="Movie Booking System", font=ctk.CTkFont(size=24, weight="bold"))
-        self.label.pack(pady=(40, 10))
+        # Background Decoration (Optional: can add image here)
+        self.bg_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.bg_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+        # Header with subtle glow effect
+        self.label = ctk.CTkLabel(
+            self.bg_frame, 
+            text="CINEMA PRO", 
+            font=ctk.CTkFont(family="Inter", size=48, weight="bold"),
+            text_color="#c0392b"
+        )
+        self.label.pack(pady=(0, 40))
 
         # DB Settings Button (Top Right)
-        self.settings_btn = ctk.CTkButton(self, text="⚙ DB Settings", width=80, fg_color="gray30", command=self.open_settings)
-        self.settings_btn.place(relx=0.95, rely=0.05, anchor="ne")
+        self.settings_btn = ctk.CTkButton(
+            self, text="⚙ Settings", width=100, 
+            fg_color="transparent", border_width=1, 
+            command=self.open_settings
+        )
+        self.settings_btn.place(relx=0.98, rely=0.02, anchor="ne")
+
+        # Main Card
+        self.card = ctk.CTkFrame(self.bg_frame, width=450, height=500, corner_radius=15, border_width=1)
+        self.card.pack(padx=20, pady=10)
+        self.card.pack_propagate(False)
 
         # Tabview for Login/Register
-        self.tabview = ctk.CTkTabview(self, width=400)
-        self.tabview.pack(pady=10, padx=40, expand=True, fill="both")
-        self.tabview.add("Login")
-        self.tabview.add("Sign Up")
+        self.tabview = ctk.CTkTabview(self.card, width=400)
+        self.tabview.pack(pady=30, padx=30, expand=True, fill="both")
+        self.tabview.add("LOGIN")
+        self.tabview.add("SIGN UP")
 
         self.setup_login_tab()
         self.setup_signup_tab()

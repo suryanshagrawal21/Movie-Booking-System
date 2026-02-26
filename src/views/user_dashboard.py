@@ -16,24 +16,39 @@ class UserDashboard(ctk.CTkFrame):
 
     def setup_ui(self):
         # Sidebar
-        self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0)
+        self.sidebar = ctk.CTkFrame(self, width=220, corner_radius=0, fg_color="#1a1a1a", border_width=0)
         self.sidebar.grid(row=0, column=0, sticky="nsew")
         
-        self.logo_label = ctk.CTkLabel(self.sidebar, text="Cinema Pro", font=ctk.CTkFont(size=20, weight="bold"))
-        self.logo_label.pack(pady=20)
+        self.logo_label = ctk.CTkLabel(self.sidebar, text="🎬 CINEMA PRO", font=ctk.CTkFont(size=22, weight="bold"), text_color="#c0392b")
+        self.logo_label.pack(pady=40, padx=20)
         
-        self.nav_movies_btn = ctk.CTkButton(self.sidebar, text="Movies", fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), command=self.show_movies)
-        self.nav_movies_btn.pack(pady=5, padx=10, fill="x")
+        self.nav_movies_btn = ctk.CTkButton(
+            self.sidebar, text="  🎥  Movies", 
+            anchor="w", fg_color="transparent", 
+            height=45, font=ctk.CTkFont(size=14),
+            command=self.show_movies
+        )
+        self.nav_movies_btn.pack(pady=5, padx=20, fill="x")
         
-        self.nav_history_btn = ctk.CTkButton(self.sidebar, text="My Bookings", fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), command=self.show_history)
-        self.nav_history_btn.pack(pady=5, padx=10, fill="x")
+        self.nav_history_btn = ctk.CTkButton(
+            self.sidebar, text="  🎟️  My Bookings", 
+            anchor="w", fg_color="transparent", 
+            height=45, font=ctk.CTkFont(size=14),
+            command=self.show_history
+        )
+        self.nav_history_btn.pack(pady=5, padx=20, fill="x")
 
-        # Navigating up two levels: self (UserDashboard) -> self.master (container) -> self.master.master (MovieApp)
-        ctk.CTkButton(self.sidebar, text="Logout", fg_color="#c0392b", command=self.master.master.logout).pack(side="bottom", pady=20, padx=20, fill="x")
+        # Logout button
+        ctk.CTkButton(
+            self.sidebar, text="Logout", 
+            fg_color="transparent", border_width=1, 
+            border_color="#c0392b", hover_color="#c0392b",
+            command=self.master.master.logout
+        ) .pack(side="bottom", pady=30, padx=30, fill="x")
 
         # Main Content Area
         self.main_container = ctk.CTkFrame(self, fg_color="transparent")
-        self.main_container.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
+        self.main_container.grid(row=0, column=1, sticky="nsew", padx=30, pady=30)
         
         self.show_movies()
 
@@ -45,15 +60,19 @@ class UserDashboard(ctk.CTkFrame):
         self.clear_main_container()
         
         header_frame = ctk.CTkFrame(self.main_container, fg_color="transparent")
-        header_frame.pack(fill="x", pady=(0, 20))
+        header_frame.pack(fill="x", pady=(0, 30))
         
-        ctk.CTkLabel(header_frame, text="Available Movies", font=ctk.CTkFont(size=24, weight="bold")).pack(side="left")
+        ctk.CTkLabel(header_frame, text="Explore Movies", font=ctk.CTkFont(family="Inter", size=32, weight="bold")).pack(side="left")
         
-        self.search_entry = ctk.CTkEntry(header_frame, placeholder_text="Search...")
-        self.search_entry.pack(side="right", padx=10)
-        ctk.CTkButton(header_frame, text="Search", width=80, command=self.handle_search).pack(side="right")
+        search_frame = ctk.CTkFrame(header_frame, fg_color="transparent")
+        search_frame.pack(side="right")
+        
+        self.search_entry = ctk.CTkEntry(search_frame, placeholder_text="Search movies...", width=250, height=40)
+        self.search_entry.pack(side="left", padx=10)
+        
+        ctk.CTkButton(search_frame, text="Search", width=100, height=40, command=self.handle_search).pack(side="left")
 
-        self.content_area = ctk.CTkScrollableFrame(self.main_container)
+        self.content_area = ctk.CTkScrollableFrame(self.main_container, fg_color="transparent")
         self.content_area.pack(fill="both", expand=True)
         
         self.load_movies()
@@ -68,23 +87,37 @@ class UserDashboard(ctk.CTkFrame):
             movies = self.booking_service.get_available_movies()
         
         if not movies:
-            ctk.CTkLabel(self.content_area, text="No movies found.").pack(pady=20)
+            ctk.CTkLabel(self.content_area, text="No movies found.", font=ctk.CTkFont(size=16)).pack(pady=40)
             return
 
         for movie in movies:
             self.create_movie_card(movie)
 
     def create_movie_card(self, movie):
-        card = ctk.CTkFrame(self.content_area, corner_radius=10)
-        card.pack(fill="x", pady=10, padx=10)
+        card = ctk.CTkFrame(self.content_area, corner_radius=15, border_width=1, border_color="#2f2f2f")
+        card.pack(fill="x", pady=12, padx=10)
         
+        # Details Inner Frame
         details_frame = ctk.CTkFrame(card, fg_color="transparent")
-        details_frame.pack(side="left", padx=20, pady=10, fill="both", expand=True)
+        details_frame.pack(side="left", padx=25, pady=20, fill="both", expand=True)
         
-        ctk.CTkLabel(details_frame, text=movie['title'], font=ctk.CTkFont(size=18, weight="bold")).pack(anchor="w")
-        ctk.CTkLabel(details_frame, text=f"{movie['duration_minutes']} mins | {movie['rating']} ⭐").pack(anchor="w")
+        ctk.CTkLabel(details_frame, text=movie['title'].upper(), font=ctk.CTkFont(size=20, weight="bold"), text_color="#f1f1f1").pack(anchor="w")
         
-        ctk.CTkButton(card, text="Book Now", command=lambda m=movie: self.on_book_click(m)).pack(side="right", padx=20)
+        meta_frame = ctk.CTkFrame(details_frame, fg_color="transparent")
+        meta_frame.pack(anchor="w", pady=(5, 0))
+        
+        ctk.CTkLabel(meta_frame, text=f"⏱ {movie['duration_minutes']} MINS", font=ctk.CTkFont(size=12, weight="bold"), text_color="#888888").pack(side="left")
+        ctk.CTkLabel(meta_frame, text=" | ", text_color="#444444").pack(side="left", padx=5)
+        ctk.CTkLabel(meta_frame, text=f"⭐ {movie['rating']}", font=ctk.CTkFont(size=12, weight="bold"), text_color="#f1c40f").pack(side="left")
+        
+        ctk.CTkLabel(details_frame, text=movie['director'], font=ctk.CTkFont(size=13), text_color="#666666").pack(anchor="w", pady=(5, 0))
+
+        ctk.CTkButton(
+            card, text="BOOK TICKETS", 
+            width=150, height=45, corner_radius=8,
+            font=ctk.CTkFont(size=13, weight="bold"),
+            command=lambda m=movie: self.on_book_click(m)
+        ).pack(side="right", padx=25)
 
     def handle_search(self):
         self.load_movies(self.search_entry.get())

@@ -14,7 +14,11 @@ class MovieApp(ctk.CTk):
         
         # Set Appearance
         ctk.set_appearance_mode("Dark")
-        ctk.set_default_color_theme("blue")
+        try:
+            theme_path = "src/assets/cinema_theme.json"
+            ctk.set_default_color_theme(theme_path)
+        except Exception:
+            ctk.set_default_color_theme("blue")
 
         self.auth_service = AuthService()
         self.booking_service = BookingService()

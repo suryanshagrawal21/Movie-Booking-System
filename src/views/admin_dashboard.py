@@ -13,19 +13,29 @@ class AdminDashboard(ctk.CTkFrame):
         self.setup_ui()
 
     def setup_ui(self):
-        self.tabview = ctk.CTkTabview(self)
-        self.tabview.pack(fill="both", expand=True, padx=20, pady=(20, 5))
+        # Sidebar-like top header or just tabview
+        self.tabview = ctk.CTkTabview(self, corner_radius=10)
+        self.tabview.pack(fill="both", expand=True, padx=30, pady=(30, 10))
         
-        self.tabview.add("Manage Movies")
-        self.tabview.add("Manage Shows")
-        self.tabview.add("View Bookings")
+        self.tabview.add("MANAGE MOVIES")
+        self.tabview.add("MANAGE SHOWS")
+        self.tabview.add("VIEW BOOKINGS")
         
         self.setup_movie_management()
         self.setup_show_management()
         self.setup_booking_view()
         
-        # Logout button
-        ctk.CTkButton(self, text="Logout", fg_color="#c0392b", width=120, command=self.master.master.logout).pack(side="bottom", pady=(5, 20))
+        # Bottom bar for logout
+        self.bottom_bar = ctk.CTkFrame(self, height=60, fg_color="transparent")
+        self.bottom_bar.pack(side="bottom", fill="x", padx=30, pady=(0, 20))
+        
+        ctk.CTkButton(
+            self.bottom_bar, text="LOGOUT", 
+            width=120, height=35,
+            fg_color="transparent", border_width=1, 
+            border_color="#c0392b", hover_color="#c0392b",
+            command=self.master.master.logout
+        ).pack(side="right")
 
     def setup_movie_management(self):
         tab = self.tabview.tab("Manage Movies")
