@@ -49,7 +49,7 @@ class LoginView(ctk.CTkFrame):
         self.setup_signup_tab()
 
     def setup_login_tab(self):
-        tab = self.tabview.tab("Login")
+        tab = self.tabview.tab("LOGIN")
         
         self.login_username = ctk.CTkEntry(tab, placeholder_text="Username", width=300)
         self.login_username.pack(pady=15)
@@ -64,7 +64,7 @@ class LoginView(ctk.CTkFrame):
         self.login_status.pack()
 
     def setup_signup_tab(self):
-        tab = self.tabview.tab("Sign Up")
+        tab = self.tabview.tab("SIGN UP")
         
         self.signup_username = ctk.CTkEntry(tab, placeholder_text="Username", width=300)
         self.signup_username.pack(pady=10)
