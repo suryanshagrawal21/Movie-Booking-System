@@ -175,12 +175,29 @@ class MovieBookingApp(tk.Tk):
 
     def add_movie(self):
         """Adds a movie to the DB."""
-        # Simple Validation
-        if not self.vars["name"].get() or not self.vars["movie_id"].get():
+        # Validation
+        data = self.get_form_data()
+        
+        if not data["name"] or not data["movie_id"]:
             messagebox.showwarning("Validation Error", "Movie Name and ID are required.")
             return
 
-        if self.db.add_movie(**self.get_form_data()):
+        # Validate Date
+        import re
+        if not re.match(r"\d{4}-\d{2}-\d{2}", data["release_date"]):
+             messagebox.showwarning("Validation Error", "Date must be in YYYY-MM-DD format.")
+             return
+
+        # Validate Numeric Fields
+        try:
+            float(data["budget"])
+            float(data["duration"])
+            float(data["rating"])
+        except ValueError:
+            messagebox.showwarning("Validation Error", "Budget, Duration, and Rating must be numbers.")
+            return
+
+        if self.db.add_movie(**data):
             messagebox.showinfo("Success", "Movie added successfully!")
             self.load_movies()
             self.clear_form()

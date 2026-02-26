@@ -1,0 +1,28 @@
+# Database Configuration (Personal Credentials)
+config.json
+
+# Generated Tickets
+tickets/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+Desktop.ini
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# VS Code / IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo

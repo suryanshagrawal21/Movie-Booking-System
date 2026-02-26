@@ -67,27 +67,30 @@ Stores ticket booking records.
 
 ### Prerequisites
 1.  **Python 3.x** installed.
-2.  **MySQL Server** installed and running.
+│   ├── models/             # Data access layer (MySQL interactions)
+│   ├── views/              # UI components (CustomTkinter)
+│   ├── controllers/        # Business logic and services
+│   ├── utils/              # Hashing, PDF generation, etc.
+│   └── assets/             # Icons and images
+├── tickets/                # Generated PDF tickets
+├── tests/                  # Unit tests
+├── run.py                  # Main application entry point
+└── requirements.txt        # Project dependencies
+```
 
-### Steps
+## 🛠️ Installation & Setup
 
-1.  **Clone the Repository**
+1.  **Clone the Repository**:
     ```bash
     git clone https://github.com/suryanshagrawal21/Movie-Booking-System.git
     cd Movie-Booking-System
     ```
 
-2.  **Install Dependencies**
+2.  **Install Dependencies**:
     ```bash
     pip install -r requirements.txt
     ```
 
-3.  **Setup Database**
-    Run the setup script to create the database and tables.
-    ```bash
-    python database/setup.py
-    ```
-    *   *Note: If your MySQL root password is not the default, the script will prompt you to enter it.*
 
 ## ▶️ How to Run
 

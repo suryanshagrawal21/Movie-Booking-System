@@ -1,1 +1,5 @@
 mysql-connector-python
+customtkinter
+bcrypt
+reportlab
+pytest
