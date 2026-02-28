@@ -27,7 +27,29 @@ class MovieApp(ctk.CTk):
         self.container = ctk.CTkFrame(self)
         self.container.pack(fill="both", expand=True)
         
+        
+        self.check_db_connection()
         self.show_login()
+        self.check_session()
+
+    def check_session(self):
+        if self.auth_service.current_user and not self.auth_service.is_session_valid():
+            import tkinter.messagebox as messagebox
+            messagebox.showinfo("Session Expired", "Your session has expired (30 mins inactivity). Please log in again.")
+            self.logout()
+        self.after(60000, self.check_session)  # check every minute
+
+
+    def check_db_connection(self):
+        from src.models.base_model import BaseModel
+        import tkinter.messagebox as messagebox
+        db = BaseModel()
+        conn = db._get_connection(db="")
+        if not conn:
+            messagebox.showwarning("Database Connection Failed", "Warning: Cannot connect to MySQL.\nPlease click the '⚙ Settings' button to configure your database credentials.")
+        elif conn.is_connected():
+            conn.close()
+
 
     def show_login(self):
         self.clear_container()

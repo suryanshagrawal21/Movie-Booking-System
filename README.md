@@ -1,105 +1,49 @@
-# 🎬 Cinema Pro - Professional Movie Booking System
+# Cinema Pro - Movie Booking System
 
-[![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)](https://www.mysql.com/)
-[![Architecture](https://img.shields.io/badge/Architecture-MVC-green.svg)](#architecture)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-**Cinema Pro** is an industry-grade desktop application designed for seamless movie ticket management and booking. Built with a focus on robust architecture, clean code, and user experience, this project demonstrates a complete real-world software engineering lifecycle.
-
----
+This is a premium, startup-level implementation of a Movie Ticket Booking System built using Python, CustomTkinter, and MySQL. It's designed to simulate a real-world platform like BookMyShow or Netflix.
 
 ## 🚀 Key Features
+* **Premium Dark Mode UI:** Modern aesthetics using CustomTkinter with glassmorphism effects, smooth animations, and a responsive grid layout.
+* **Live Movie Data (TMDB API):** Real-time 'Now Playing' movies synced directly from The Movie Database (TMDB) with dynamic poster caching.
+* **Interactive Seat Selection:** Visual theater layout with VIP premium seat markups, dynamic pricing, and disabled occupied seats.
+* **Secure Authentication:** Passwords hashed with bcrypt, strict email/password validation, and automatic session timeouts (30 mins).
+* **Booking Ecosystem:** Complete flow from selection to payment simulation gateway, ending with a dynamic digital PDF ticket generation (with fake barcode layout).
 
-### 👤 User Module
-- **Secure Authentication**: Robust login/signup system with password hashing (bcrypt).
-- **Interactive Dashboard**: Search, filter, and browse upcoming movies.
-- **Dynamic Seat Selection**: Real-time seat availability grid with premium seat indicators.
-- **Booking History**: Track past bookings and view/download generated tickets.
-- **E-Ticket Generation**: Automatic PDF ticket generation for confirmed bookings.
+## 🛠️ Architecture Overview (MVC Pattern)
+The codebase strictly adheres to the Model-View-Controller (MVC) architectural pattern:
 
-### 🛡️ Admin Module
-- **Movie Management**: Full CRUD operations for movie records.
-- **Show Scheduling**: Map movies to theaters and specific time slots.
-- **Theater Control**: Manage theater capacity and seat mappings.
-
----
-
-## 🏗️ Architecture
-
-The project follows a **Layered MVC (Model-View-Controller)** pattern:
-
-- **Models**: Handled via a robust data access layer (`BaseModel`) with transaction support.
-- **Controllers**: Centralized business logic (Service Layer) for Auth and Bookings.
-- **Views**: Modern, responsive UI built with **CustomTkinter**.
-- **Utils**: Utility layer for PDF generation, Logging, and Configuration.
-
-```mermaid
-graph TD
-    A[View] --> B[Controller]
-    B --> C[Model]
-    C --> D[(MySQL Database)]
-    E[Logging/Utils] -.-> B
-    E -.-> C
+```
+src/
+├── models/         # Database operations, abstractions, queries
+├── views/          # UI components (CustomTkinter interfaces)
+├── controllers/    # Business logic (Auth, Booking services)
+├── services/       # External integrations (TMDB API)
+└── utils/          # Helpers (Logging, PDF gen, Config management)
 ```
 
----
+## 🔐 Security Enhancements
+Security was prioritized for production readiness:
+1. **Parameterized Queries:** Complete defense against SQL Injection attacks.
+2. **Environment Variables (.env):** Sensitive database credentials and API keys are strictly kept out of source code.
+3. **Bcrypt Hashing:** User passwords are encrypted before storage.
+4. **Session Hardening:** 30-minute inactivity timeouts implemented globally to prevent session hijacking.
+5. **Input Sanitation:** Regex-based validation on all input fields.
 
-## 🛠️ Tech Stack
+## ⚡ Scalability Considerations
+* **Database Normalization:** 3NF design tracking Theaters, Shows, Seats, and Users independently.
+* **Image Caching:** TMDB poster assets are cached locally (`src/assets/posters/`) to prevent rate limits and drop load times.
+* **Transaction Safety:** MySQL atomic commits ensure a seat cannot be double-booked during concurrent requests.
 
-- **Language**: Python 3.12+
-- **Database**: MySQL (Relational Schema)
-- **GUI Framework**: CustomTkinter (Modern Dark UI)
-- **Security**: Bcrypt (Hashing)
-- **Reporting**: ReportLab (PDF Generation)
-- **Config**: Environment Variable support (.env)
+## 👔 Interview Talking Points
+1. *"I separated the TMDB integration into a specific Service Layer, so if the API changes, our core models remain unaffected."*
+2. *"I implemented an initial health check on startup that uses an empty DB parameter to verify credentials before attempting to bind to the specific schema."*
+3. *"I utilized ReportLab to dynamically build vector-based PDF tickets because it allowed me to overlay a dark-mode theme directly onto the printable document."*
 
----
+## Running the Application
+Ensure you have the latest packages installed and your `.env` configured inside the root directory.
 
-## ⚙️ Setup & Installation
-
-### Prerequisites
-- MySQL Server installed and running.
-- Python 3.x installed.
-
-### Commands
-1. **Clone the repo**:
-   ```bash
-   git clone https://github.com/suryanshagrawal21/Movie-Booking-System.git
-   cd Movie-Booking-System
-   ```
-2. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. **Configure Environment**:
-   - Create a `.env` file based on `.env.example`.
-   - Update your MySQL credentials.
-4. **Initialize Database**:
-   ```bash
-   python database/setup_v2.py
-   ```
-5. **Run Application**:
-   ```bash
-   python run.py
-   ```
-
----
-
-## 👨‍💻 Interview Readiness
-
-This project was built following industry best practices:
-- **Clean Code**: SOLID principles and consistent naming conventions.
-- **Error Handling**: Centralized try-catch blocks and logging.
-- **Concurrency**: Transaction-safe seat booking logic.
-- **Security**: No hardcoded credentials; handled via environment variables.
-
-*See [docs/interview_prep.md](docs/interview_prep.md) for a detailed pitch guide and common Q&A.*
-
----
-
-## 🔮 Future Improvements
-- [ ] Integration with real Payment Gateways (Stripe/PayPal API).
-- [ ] Email notifications using SMTP (concept implemented).
-- [ ] Web-based dashboard using Flask/Django.
-- [ ] Machine Learning based movie recommendations.
+```bash
+pip install -r requirements.txt
+python database/setup_v2.py  # Seed the database
+python run.py                # Launch the app
+```

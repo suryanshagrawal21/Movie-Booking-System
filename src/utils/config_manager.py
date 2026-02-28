@@ -29,10 +29,13 @@ class ConfigManager:
                                 "DB_HOST": "db_host",
                                 "DB_USER": "db_user",
                                 "DB_PASSWORD": "db_password",
-                                "DB_NAME": "db_name"
+                                "DB_NAME": "db_name",
+                                "TMDB_API_KEY": "tmdb_api_key"
                             }
                             if k in env_map:
                                 config[env_map[k]] = v
+                            else:
+                                config[k] = v
             except Exception:
                 pass
 

@@ -28,3 +28,27 @@ class MovieModel(BaseModel):
         query = "SELECT * FROM movies WHERE title LIKE %s OR description LIKE %s OR cast LIKE %s"
         p = f"%{term}%"
         return self.fetch_all(query, (p, p, p))
+
+    def sync_from_tmdb(self, tmdb_movies):
+        """Upserts a list of movies fetched from TMDB into the local database"""
+        success_count = 0
+        for m in tmdb_movies:
+            # We don't have TMDB ID in schema, so we rely on title to avoid duplicates or assume they're fresh
+            existing = self.fetch_one("SELECT id FROM movies WHERE title = %s", (m['title'],))
+            if not existing:
+                try:
+                    self.add_movie(
+                        title=m['title'],
+                        description=m.get('overview', ''),
+                        release_date=m.get('release_date', '2000-01-01'),
+                        director="TMDB", 
+                        cast="",
+                        budget=0.0,
+                        duration_minutes=120,
+                        rating=m.get('vote_average', 0.0),
+                        poster_path=m.get('poster_path')
+                    )
+                    success_count += 1
+                except Exception as e:
+                    print(f"Error syncing {m['title']}: {e}")
+        return success_count

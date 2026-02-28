@@ -3,3 +3,4 @@
 2026-02-27 02:01:05,873 - MovieBookingSystem - ERROR - Connection Error: 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 2026-02-27 02:01:19,765 - MovieBookingSystem - ERROR - Connection Error: 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 2026-02-27 02:01:20,811 - MovieBookingSystem - ERROR - Connection Error: 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+2026-02-27 02:06:08,339 - MovieBookingSystem - ERROR - Connection Error: 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)

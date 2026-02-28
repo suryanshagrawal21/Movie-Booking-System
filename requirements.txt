@@ -3,3 +3,5 @@ customtkinter
 bcrypt
 reportlab
 pytest
+requests
+python-dotenv

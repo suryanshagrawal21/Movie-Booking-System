@@ -68,7 +68,9 @@ class AdminDashboard(ctk.CTkFrame):
         self.movie_date = ctk.CTkEntry(form_frame, placeholder_text="Release Date (YYYY-MM-DD)")
         self.movie_date.pack(pady=5, padx=10, fill="x")
 
-        ctk.CTkButton(form_frame, text="Save Movie", command=self.add_movie, fg_color="#27ae60", hover_color="#2ecc71").pack(pady=20, padx=10, fill="x")
+        ctk.CTkButton(form_frame, text="Save Movie", command=self.add_movie, fg_color="#27ae60", hover_color="#2ecc71").pack(pady=10, padx=10, fill="x")
+        
+        ctk.CTkButton(form_frame, text="🔄 Sync TMDB", command=self.sync_tmdb, fg_color="#8e44ad", hover_color="#9b59b6").pack(pady=10, padx=10, fill="x")
 
         # Right: Movie List
         list_frame = ctk.CTkFrame(tab)
@@ -170,6 +172,24 @@ class AdminDashboard(ctk.CTkFrame):
                 messagebox.showerror("Error", "Failed to add movie.")
         except Exception as e:
             messagebox.showerror("Validation Error", str(e))
+
+    def sync_tmdb(self):
+        from src.services.tmdb_service import tmdb_service
+        try:
+            movies = tmdb_service.get_now_playing()
+            if not movies:
+                messagebox.showerror("Error", "Could not fetch movies from TMDB. Check API Key in .env")
+                return
+            
+            # Download posters asynchronously or inline
+            for m in movies:
+                tmdb_service.download_poster(m.get('poster_path'))
+                
+            success_count = self.booking_service.movie_model.sync_from_tmdb(movies)
+            self.refresh_movie_list()
+            messagebox.showinfo("Success", f"Synced {success_count} new movies from TMDB!")
+        except Exception as e:
+            messagebox.showerror("TMDB Sync Error", str(e))
 
     def add_show(self):
         try:

@@ -97,9 +97,27 @@ class UserDashboard(ctk.CTkFrame):
         card = ctk.CTkFrame(self.content_area, corner_radius=15, border_width=1, border_color="#2f2f2f")
         card.pack(fill="x", pady=12, padx=10)
         
+        import os
+        
+        # Load Poster Image
+        poster_path = movie.get('poster_path')
+        img_widget = None
+        if poster_path:
+            local_path = f"src/assets/posters{poster_path}"
+            if os.path.exists(local_path):
+                img = Image.open(local_path)
+                ctk_img = ctk.CTkImage(light_image=img, dark_image=img, size=(100, 150))
+                img_widget = ctk.CTkLabel(card, image=ctk_img, text="")
+                img_widget.pack(side="left", padx=15, pady=15)
+                
+        if not img_widget:
+            # Fallback text placeholder
+            fallback = ctk.CTkLabel(card, text="🎬", font=ctk.CTkFont(size=50), width=100, height=150, corner_radius=10, fg_color="#222222")
+            fallback.pack(side="left", padx=15, pady=15)
+            
         # Details Inner Frame
         details_frame = ctk.CTkFrame(card, fg_color="transparent")
-        details_frame.pack(side="left", padx=25, pady=20, fill="both", expand=True)
+        details_frame.pack(side="left", padx=15, pady=20, fill="both", expand=True)
         
         ctk.CTkLabel(details_frame, text=movie['title'].upper(), font=ctk.CTkFont(size=20, weight="bold"), text_color="#f1f1f1").pack(anchor="w")
         
@@ -110,7 +128,9 @@ class UserDashboard(ctk.CTkFrame):
         ctk.CTkLabel(meta_frame, text=" | ", text_color="#444444").pack(side="left", padx=5)
         ctk.CTkLabel(meta_frame, text=f"⭐ {movie['rating']}", font=ctk.CTkFont(size=12, weight="bold"), text_color="#f1c40f").pack(side="left")
         
-        ctk.CTkLabel(details_frame, text=movie['director'], font=ctk.CTkFont(size=13), text_color="#666666").pack(anchor="w", pady=(5, 0))
+        desc = movie.get('description', '')
+        if len(desc) > 100: desc = desc[:97] + "..."
+        ctk.CTkLabel(details_frame, text=desc, font=ctk.CTkFont(size=12), text_color="#aaaaaa", justify="left", wraplength=400).pack(anchor="w", pady=(5, 0))
 
         ctk.CTkButton(
             card, text="BOOK TICKETS", 
@@ -173,7 +193,32 @@ class UserDashboard(ctk.CTkFrame):
                 ctk.CTkButton(f, text="📄 View Ticket", width=100, command=lambda p=ticket_path: os.startfile(p)).pack(side="right", padx=10, pady=5)
 
     def on_booking_complete(self, ticket_path):
-        messagebox.showinfo("Success", f"Ticket booked successfully!\nTicket saved at: {ticket_path}")
-        if os.path.exists(ticket_path):
-            os.startfile(ticket_path)
-        self.show_history()
+        # Create an animated success overlay
+        success_win = ctk.CTkToplevel(self)
+        success_win.title("Booking Confirmed")
+        success_win.geometry("400x350")
+        success_win.attributes("-topmost", True)
+        
+        bg_frame = ctk.CTkFrame(success_win, fg_color="#1a1a1a")
+        bg_frame.pack(fill="both", expand=True)
+
+        icon_label = ctk.CTkLabel(bg_frame, text="✅", font=ctk.CTkFont(size=1))
+        icon_label.pack(pady=(40, 10))
+        
+        ctk.CTkLabel(bg_frame, text="Payment Successful!", font=ctk.CTkFont(size=24, weight="bold"), text_color="#2ecc71").pack(pady=10)
+        ctk.CTkLabel(bg_frame, text="Your tickets have been booked.", font=ctk.CTkFont(size=14), text_color="#aaaaaa").pack(pady=5)
+        
+        def animate(size):
+            if size < 70:
+                icon_label.configure(font=ctk.CTkFont(size=size))
+                success_win.after(20, animate, size + 5)
+                
+        animate(10)
+
+        def close_and_open():
+            success_win.destroy()
+            if os.path.exists(ticket_path):
+                os.startfile(ticket_path)
+            self.show_history()
+
+        ctk.CTkButton(bg_frame, text="View Ticket", width=200, height=40, font=ctk.CTkFont(weight="bold"), command=close_and_open).pack(pady=30)

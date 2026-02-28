@@ -15,14 +15,38 @@ class BaseModel:
             "database": config["db_name"]
         }
 
-    def _get_connection(self, database=None):
-        """Internal method to get a connection."""
-        cfg = self.config.copy()
-        if database:
-            cfg["database"] = database
-        
+    def test_connection(self, host, user, password, database="movie_booking"):
+        """Static method to test connection with provided credentials."""
         try:
-            conn = mysql.connector.connect(**cfg)
+            conn = mysql.connector.connect(
+                host=host,
+                user=user,
+                password=password,
+                database=database
+            )
+            if conn.is_connected():
+                conn.close()
+                return True
+        except Error:
+            return False
+        return False
+
+    def _get_connection(self, db=None):
+        """Internal method to get a connection."""
+        try:
+            # Default to the config database unless empty string is explicitly passed
+            db_name = self.config.get("db_name", "movie_booking")
+            if db == "":
+                db_name = None
+            elif db is not None:
+                db_name = db
+                
+            conn = mysql.connector.connect(
+                host=self.config.get("host", "localhost"),
+                user=self.config.get("user", "root"),
+                password=self.config.get("password", ""),
+                database=db_name
+            )
             if conn.is_connected():
                 return conn
         except Error as e:

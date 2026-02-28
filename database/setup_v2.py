@@ -1,31 +1,34 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import mysql.connector
 from src.models.base_model import BaseModel
 from src.utils.helpers import SecurityUtils
 from src.utils.config_manager import ConfigManager
-import os
 import getpass
 
 def setup_database():
-    print("🎬 Movie Booking System 2.0 - Database Setup")
+    print("Movie Booking System 2.0 - Database Setup")
     print("-" * 40)
     
-    db = BaseModel()
-    conn = db._get_connection(database="") # Connect without DB first
+    db_instance = BaseModel()
+    conn = db_instance._get_connection(db="") # Connect without DB first
     
     if not conn:
-        print("❌ Could not connect to MySQL with current settings.")
+        print("[ERROR] Could not connect to MySQL with current settings.")
         host = input("Enter MySQL Host [localhost]: ") or "localhost"
         user = input("Enter MySQL User [root]: ") or "root"
         password = getpass.getpass("Enter MySQL Password: ")
         
         # Test new credentials
-        if db.test_connection(host, user, password):
+        if db_instance.test_connection(host, user, password):
             ConfigManager.update_db_credentials(host, user, password, "movie_booking")
-            print("✅ Connection successful! Settings saved to config.json.")
-            db = BaseModel() # Reload with new config
-            conn = db._get_connection(database="")
+            print("[SUCCESS] Connection successful! Settings saved to config.json.")
+            db_instance = BaseModel() # Reload with new config
+            conn = db_instance._get_connection(db="")
         else:
-            print("❌ Still could not connect. Please check your MySQL service and credentials.")
+            print("[ERROR] Still could not connect. Please check your MySQL service and credentials.")
             return
 
     cursor = conn.cursor()
@@ -45,7 +48,7 @@ def setup_database():
                     print(f"Warning: {e}")
     
     conn.commit()
-    print("✅ Schema created successfully.")
+    print("[SUCCESS] Schema created successfully.")
 
     # Seed Initial Data
     print("Seeding initial data...")
