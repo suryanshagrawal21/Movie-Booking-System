@@ -81,3 +81,4 @@
 2026-02-28 19:09:53,263 - MovieBookingSystem - ERROR - Query Execution Error: 1046 (3D000): No database selected | Query: INSERT INTO users (username, email, password_hash, role) VALUES (%s, %s, %s, %s)
 2026-02-28 19:12:01,593 - MovieBookingSystem - ERROR - Fetch One Error: 1046 (3D000): No database selected | Query: SELECT * FROM users WHERE username = %s
 2026-02-28 19:28:51,242 - MovieBookingSystem - ERROR - Connection Error: 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+2026-02-28 19:34:17,865 - MovieBookingSystem - INFO - Executed Query: INSERT INTO users (username, email, password_hash, role) VALUES (%s, %s, %s, %s)...

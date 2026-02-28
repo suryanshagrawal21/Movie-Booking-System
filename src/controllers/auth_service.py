@@ -33,6 +33,9 @@ class AuthService:
 
     def login(self, username, password):
         user = self.user_model.get_user_by_username(username)
+        if not user:
+            user = self.user_model.get_user_by_email(username)
+            
         if user and SecurityUtils.check_password(password, user['password_hash']):
             self.current_user = user
             self.session_start = time.time()
